@@ -1,9 +1,29 @@
 package michael.com.trickortreat;
 
+import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import com.google.android.gms.maps.model.LatLng;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+public class MainActivity extends AppCompatActivity implements AsyncResponse{
+
+    private static final int NUM_ADDRESSES = 2;
+    AsyncSearch async;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -11,8 +31,82 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+        async = new AsyncSearch(); //Declares asynctask class object
+        async.asyncResp = this; //Sets async.asynResp to current AsyncResponse object
 
+
+
+        final Button start = (Button)findViewById(R.id.start);
+        final EditText search = (EditText)findViewById(R.id.locality_search);
+
+
+        start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String locality = search.getText().toString();
+
+                async.execute(locality);
+            }
+        });
+    }
+
+    //AsyncReponse interface override for retrieving LatLng object
+    @Override
+    public void finish(LatLng latLng) {
+
+        System.out.println("Your latlng is: " + latLng);
 
 
     }
+    //AsyncResponse interface override for issue retrieving LatLng object
+    @Override
+    public void issue() {
+
+        System.out.println("Problem finding your location");
+
+    }
+
+
+
+
+
+
+    //Async Tasks the locality search because of possible frame skips
+    public class AsyncSearch extends AsyncTask<String,Void,Void>{
+
+
+        public AsyncResponse asyncResp = null;
+
+        @Override
+        protected Void doInBackground(String ... strings) {
+            Geocoder geocoder = new Geocoder(getApplicationContext());
+            try {
+                List<Address> addresses = geocoder.getFromLocationName(strings[0],NUM_ADDRESSES);
+                /*If the address does exist, call onPostExecute(LatLng) and send data back to MainActivity
+                Otherwise call another onPostExecute to say that address doesn't exist
+                */
+                if(addresses.size() > 0){
+                    LatLng latLng = new LatLng(addresses.get(0).getLatitude(),addresses.get(0).getLongitude());
+                    onPostExecute(latLng);
+                }
+                else{
+                    onPostExecute();
+                }
+
+            }catch(IOException io){
+                io.printStackTrace();
+            }
+            return null;
+        }
+
+        protected void onPostExecute(LatLng latLng) {
+            asyncResp.finish(latLng);
+
+        }
+        protected void onPostExecute(){
+            asyncResp.issue();
+        }
+
+    }
+
 }
