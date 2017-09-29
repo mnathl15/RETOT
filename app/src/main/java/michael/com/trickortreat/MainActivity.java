@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+//1. CANCELLATION OF ASYNC THREAD
 public class MainActivity extends AppCompatActivity implements AsyncResponse{
 
     private static final int NUM_ADDRESSES = 2;
@@ -44,17 +45,22 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
             @Override
             public void onClick(View view) {
                 String locality = search.getText().toString();
-
                 async.execute(locality);
+
+                //1
             }
         });
     }
 
     //AsyncReponse interface override for retrieving LatLng object
     @Override
-    public void finish(LatLng latLng) {
+    public void finish(LatLng latlng) {
 
-        System.out.println("Your latlng is: " + latLng);
+        System.out.println("Your latlng is: " + latlng);
+        Intent mapIntent = new Intent(MainActivity.this,MapsActivity.class);
+        mapIntent.putExtra("Latitude", latlng.latitude); //Sends the latitude and longitude to the next intent
+        mapIntent.putExtra("Longitude",latlng.longitude);
+        startActivity(mapIntent);
 
 
     }
@@ -82,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
             Geocoder geocoder = new Geocoder(getApplicationContext());
             try {
                 List<Address> addresses = geocoder.getFromLocationName(strings[0],NUM_ADDRESSES);
+
                 /*If the address does exist, call onPostExecute(LatLng) and send data back to MainActivity
                 Otherwise call another onPostExecute to say that address doesn't exist
                 */
