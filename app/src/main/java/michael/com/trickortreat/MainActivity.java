@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
 
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
 
     //AsyncReponse interface override for retrieving LatLng object
     @Override
-    public void finish(LatLng latlng) {
+    public void sendLatlng(LatLng latlng) {
 
         System.out.println("Your latlng is: " + latlng);
         Intent mapIntent = new Intent(MainActivity.this,MapsActivity.class);
@@ -72,10 +71,15 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
 
     }
 
+    //Not needed for this class
+    @Override
+    public void getAddress(Address address) {}
 
 
+    @Override
+    public void isAddress(boolean isAddress) {
 
-
+    }
 
     //Async Tasks the locality search because of possible frame skips
     public class AsyncSearch extends AsyncTask<String,Void,Void>{
@@ -107,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
         }
 
         protected void onPostExecute(LatLng latLng) {
-            asyncResp.finish(latLng);
+            asyncResp.sendLatlng(latLng);
 
         }
         protected void onPostExecute(){
