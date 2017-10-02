@@ -13,10 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,6 +27,8 @@ import java.util.List;
 
 public class CreateEvent extends DialogFragment implements AsyncResponse {
 
+    RatingBar rating;
+    EditText addr,comment;
 
     public CreateEvent() {
         // Required empty public constructor
@@ -32,10 +37,13 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState){
         View rootView = inflater.inflate(R.layout.fragment_create_event,container);
 
-        final EditText addr = rootView.findViewById(R.id.address);
+
         Bundle bundle = getArguments(); //Retrieves address from MapsActivity
         String address = bundle.getString("Address");
-        Button submit = (Button)rootView.findViewById(R.id.submit);
+        addr = rootView.findViewById(R.id.address); //Bar to edit the address
+        rating = rootView.findViewById(R.id.rating); //Rating from 0-5
+        comment = rootView.findViewById(R.id.comment);
+        Button submit = rootView.findViewById(R.id.submit);
         addr.setText(address);
 
         //Start a thread on click submit to make sure address exists
@@ -55,8 +63,22 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
     //Sends data to firebase
     @Override
     public void isAddress(boolean isAddress) {
-        if(isAddress){
-            //Send database to firebase
+        String comments = comment.getText().toString();
+        String addrText = addr.getText().toString();
+        float stars = rating.getNumStars();
+        boolean commentExists = !comments.isEmpty();
+        boolean rated = rating.isEnabled();
+
+        System.out.println(isAddress + " " + commentExists + " " + rated);
+
+        //Checks if the address and comment  exists and there is a rating
+        if(isAddress && commentExists && rated){
+            System.out.println(comments + " " + addrText + " " + stars);
+            //Send database to firebase if address exists
+            DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference();
+            String key = dataRef.getKey();
+            Review review = new Review(stars,comments,addrText);
+            dataRef.push().child(key).setValue(review);
         }
         else{
 

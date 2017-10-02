@@ -9,18 +9,36 @@
         android:id="@+id/submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="120dp"
-        android:text="Button" />
+        android:layout_marginTop="66dp"
+        android:text="Submit Review"
+        android:layout_below="@+id/rating"
+        android:layout_centerHorizontal="true" />
 
     <EditText
         android:id="@+id/address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="105dp"
+        android:ems="10"
+        android:inputType="textPersonName"
         android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <RatingBar
+        android:id="@+id/rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/address"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="145dp"
+        android:layout_marginTop="30dp" />
+
+    <EditText
+        android:id="@+id/comment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/address"
+        android:layout_below="@+id/rating"
+        android:layout_marginTop="24dp"
         android:ems="10"
         android:inputType="textPersonName" />
 </RelativeLayout>

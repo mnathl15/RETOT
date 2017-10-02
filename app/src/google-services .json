@@ -1,0 +1,45 @@
+{
+  "project_info": {
+    "project_number": "779760396549",
+    "firebase_url": "https://trick-or.firebaseio.com",
+    "project_id": "trick-or",
+    "storage_bucket": "trick-or.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:779760396549:android:495e5b7a94d81bf8",
+        "android_client_info": {
+          "package_name": "michael.com.halloween"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "779760396549-626he7c2njsfvfa8n51u87l627iiblas.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkWAWbeA3n2j3LeVBKO0Hvo90DJDF8fkc"
+        },
+        {
+          "current_key": "AIzaSyCvNp_KHX3zmKZMJ4R2jVXt0BtH2z3K8oY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

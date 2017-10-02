@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1042048925971",
+    "firebase_url": "https://retot-56150.firebaseio.com",
+    "project_id": "retot-56150",
+    "storage_bucket": "retot-56150.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1042048925971:android:fbb0477eb2d57679",
+        "android_client_info": {
+          "package_name": "michael.com.trickortreat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1042048925971-3ck2oj98nbuell7o6usvt4k7tmqejp5a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxR2n7RGyyIxH2LIiyH5UT6PM0ed0Jgvc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
