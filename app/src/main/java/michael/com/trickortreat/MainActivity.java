@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
             @Override
             public void onClick(View view) {
                 String locality = search.getText().toString();
+                AsyncSearch async = new AsyncSearch();
                 async.execute(locality);
 
                 //1
@@ -75,11 +76,9 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
     @Override
     public void getAddress(Address address) {}
 
-
+    //Not needed for this class
     @Override
-    public void isAddress(boolean isAddress) {
-
-    }
+    public void isAddress(boolean isAddress) {}
 
     //Async Tasks the locality search because of possible frame skips
     public class AsyncSearch extends AsyncTask<String,Void,Void>{
@@ -111,11 +110,14 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
         }
 
         protected void onPostExecute(LatLng latLng) {
-            asyncResp.sendLatlng(latLng);
+            sendLatlng(latLng);
 
         }
+
+
+        //Declares an issue
         protected void onPostExecute(){
-            asyncResp.issue();
+            issue();
         }
 
     }

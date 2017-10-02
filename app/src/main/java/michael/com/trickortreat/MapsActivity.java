@@ -23,7 +23,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap map;
     private LatLng latlng;
     private LocationFinder loc;
-    LocationFinder loc2;
+
 
 
     @Override
@@ -35,7 +35,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double latitude = infoIntent.getDoubleExtra("Latitude",0);
         double longitude = infoIntent.getDoubleExtra("Longitude",0);
         this.latlng = new LatLng(latitude,longitude);
-
 
 
         loc = new LocationFinder();
@@ -66,8 +65,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onMapClick(LatLng latlng) {
 
-
-                loc.execute(latlng); //Asynchronous
+                LocationFinder locThread = new LocationFinder(); //Need to create a new async thread each time
+                locThread.execute(latlng); //Asynchronous
 
             }
         });
@@ -92,7 +91,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //Sends address to CreateEvent DialogFragment
     @Override
     public void getAddress(Address address) {
-        System.out.println("The address is: " + address.getAddressLine(0));
         CreateEvent createEvent = new CreateEvent();
         Bundle bundle = new Bundle();
         bundle.putString("Address",address.getAddressLine(0));
