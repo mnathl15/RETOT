@@ -56,13 +56,15 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
         });
 
 
+
+
         return rootView;
     }
 
     //Sends boolean from async thread to see if altered location exists
     //Sends data to firebase
     @Override
-    public void isAddress(boolean isAddress) {
+    public void sendToFirebase(boolean isAddress) {
         String comments = comment.getText().toString();
         String addrText = addr.getText().toString();
         float stars = rating.getNumStars();
@@ -76,9 +78,13 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
             System.out.println(comments + " " + addrText + " " + stars);
             //Send database to firebase if address exists
             DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference();
-            String key = dataRef.getKey();
+            String key = dataRef.push().getKey();
             Review review = new Review(stars,comments,addrText);
-            dataRef.push().child(key).setValue(review);
+            dataRef.child(key).setValue(review);
+
+            Bundle rev = new Bundle();
+            rev.putBoolean("Review",true);
+
         }
         else{
 
@@ -125,10 +131,10 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
 
         private void onPostExecute(List<Address> addresses) {
            if(addresses.size() >0){
-               isAddress(true);
+               sendToFirebase(true);
            }
            else{
-               isAddress(false);
+               sendToFirebase(false);
            }
         }
     }
