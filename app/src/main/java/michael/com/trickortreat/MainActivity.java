@@ -74,11 +74,11 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
 
     //Not needed for this class
     @Override
-    public void getAddress(Address address) {}
+    public void openDialog(Address address) {}
 
     //Not needed for this class
     @Override
-    public void isAddress(boolean isAddress) {}
+    public void sendToFirebase(Address address) {}
 
     //Async Tasks the locality search because of possible frame skips
     public class AsyncSearch extends AsyncTask<String,Void,Void>{

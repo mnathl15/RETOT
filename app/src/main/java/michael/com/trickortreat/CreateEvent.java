@@ -34,6 +34,9 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
         // Required empty public constructor
         }
 
+
+
+
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState){
         View rootView = inflater.inflate(R.layout.fragment_create_event,container);
 
@@ -64,18 +67,18 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
     //Sends boolean from async thread to see if altered location exists
     //Sends data to firebase
     @Override
-    public void sendToFirebase(boolean isAddress) {
+    public void sendToFirebase(Address address) {
         String comments = comment.getText().toString();
         String addrText = addr.getText().toString();
         float stars = rating.getNumStars();
         boolean commentExists = !comments.isEmpty();
         boolean rated = rating.isEnabled();
 
-        System.out.println(isAddress + " " + commentExists + " " + rated);
 
         //Checks if the address and comment  exists and there is a rating
-        if(isAddress && commentExists && rated){
+        if(address !=null && commentExists && rated){
             System.out.println(comments + " " + addrText + " " + stars);
+
             //Send database to firebase if address exists
             DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference();
             String key = dataRef.push().getKey();
@@ -84,6 +87,11 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
 
             Bundle rev = new Bundle();
             rev.putBoolean("Review",true);
+            rev.putString("Address",addrText);
+            rev.putDouble("Latitude",address.getLatitude());
+            rev.putDouble("Longitude",address.getLongitude());
+
+
 
         }
         else{
@@ -91,13 +99,15 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
         }
     }
 
+
+
     @Override
     public void sendLatlng(LatLng latLng) {
 
     }
 
     @Override
-    public void getAddress(Address address) {
+    public void openDialog(Address address) {
 
     }
 
@@ -130,12 +140,13 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
 
 
         private void onPostExecute(List<Address> addresses) {
+
            if(addresses.size() >0){
-               sendToFirebase(true);
+               sendToFirebase(addresses.get(0));
            }
            else{
-               sendToFirebase(false);
-           }
+               sendToFirebase(null);
+        }
         }
     }
 

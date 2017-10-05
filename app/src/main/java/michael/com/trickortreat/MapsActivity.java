@@ -1,5 +1,6 @@
 package michael.com.trickortreat;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -47,6 +48,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
+    //Code to add info from createevent to a marker
+    protected void onStart(){
+        super.onStart();
+        System.out.println("RESUMED");
+        Bundle bundle = new Bundle();
+        boolean reviewMade = bundle.getBoolean("Review");
+
+        double latitude = bundle.getDouble("Latitude");
+        double longitude = bundle.getDouble("Longitude");
+        String addrText = bundle.getString("Address");
+
+        if(reviewMade){
+            System.out.println("REVIEW HAS BEEN CREATED");
+            LatLng latLng = new LatLng(latitude,longitude);
+            map.addMarker(new MarkerOptions().position(latLng)).setTitle(addrText);
+        }
+
+
+    }
+
+
 
 
 
@@ -76,7 +98,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void isAddress(boolean isAddress) {
+    public void sendToFirebase(Address address) {
 
     }
 
@@ -90,12 +112,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ///Inherited from AsyncResponse interface
     //Sends address to CreateEvent DialogFragment
     @Override
-    public void getAddress(Address address) {
+    public void openDialog(final Address address) {
         CreateEvent createEvent = new CreateEvent();
         Bundle bundle = new Bundle();
         bundle.putString("Address",address.getAddressLine(0));
         createEvent.setArguments(bundle);
         createEvent.show(getFragmentManager(),"DialogFragment");
+        //When its cancelled or dismissed, receive information and place it on map
+        createEvent.onCancel(new DialogInterface() {
+            @Override
+            public void cancel() {
+
+            }
+
+            @Override
+            public void dismiss() {
+
+            }
+        });
 
     }
 
@@ -128,7 +162,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         private void onPostExecute(Address address) {
 
-            getAddress(address);
+            //Opens the dialog fragment for creating a review
+            openDialog(address);
         }
     }
 
