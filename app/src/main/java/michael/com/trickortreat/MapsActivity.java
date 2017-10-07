@@ -8,6 +8,7 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -15,15 +16,22 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,AsyncResponse {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,AsyncResponse,SwipeRefreshLayout.OnRefreshListener {
 
     private GoogleMap map;
     private LatLng latlng;
     private LocationFinder loc;
+    String locality;
+    double latitude,longitude;
 
 
 
@@ -33,8 +41,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
 
         Intent infoIntent = getIntent(); //Gets extra data sent from MainActivity
-        double latitude = infoIntent.getDoubleExtra("Latitude",0);
-        double longitude = infoIntent.getDoubleExtra("Longitude",0);
+        latitude = infoIntent.getDoubleExtra("Latitude",0);
+        longitude = infoIntent.getDoubleExtra("Longitude",0);
+        locality = infoIntent.getStringExtra("Locality");
+
         this.latlng = new LatLng(latitude,longitude);
 
 
@@ -47,26 +57,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
     }
 
-
-    //Code to add info from createevent to a marker
-    protected void onStart(){
-        super.onStart();
-        System.out.println("RESUMED");
-        Bundle bundle = new Bundle();
-        boolean reviewMade = bundle.getBoolean("Review");
-
-        double latitude = bundle.getDouble("Latitude");
-        double longitude = bundle.getDouble("Longitude");
-        String addrText = bundle.getString("Address");
-
-        if(reviewMade){
-            System.out.println("REVIEW HAS BEEN CREATED");
-            LatLng latLng = new LatLng(latitude,longitude);
-            map.addMarker(new MarkerOptions().position(latLng)).setTitle(addrText);
-        }
-
-
-    }
 
 
 
@@ -115,7 +105,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void openDialog(final Address address) {
         CreateEvent createEvent = new CreateEvent();
         Bundle bundle = new Bundle();
+
+        //Sends location details to CreateEvent dialogFragment
         bundle.putString("Address",address.getAddressLine(0));
+        bundle.putString("Locality",locality);
+        bundle.putDouble("Latitude",latitude);
+        bundle.putDouble("Longitude",longitude);
+
         createEvent.setArguments(bundle);
         createEvent.show(getFragmentManager(),"DialogFragment");
         //When its cancelled or dismissed, receive information and place it on map
@@ -136,6 +132,56 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ///Inherited from AsyncResponse interface
     @Override
     public void issue() {
+
+    }
+
+    //Inherited from onSwipeRefresh
+    @Override
+    public void onRefresh() {
+        updateUI();
+
+    }
+
+    public void onStart(){
+        super.onStart();
+        updateUI();
+    }
+
+    //Updates the map
+    public void updateUI(){
+        DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference();
+        dataRef.orderByChild("locality").equalTo(locality).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Review review  = dataSnapshot.getValue(Review.class);
+                LatLng latlng = new LatLng(review.getLatitude(),review.getLongitude());
+
+                //Adds reviews that are in your locality
+                map.addMarker(new MarkerOptions().position(latlng).title(review.getAddress()));
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 
     }
 
@@ -166,5 +212,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             openDialog(address);
         }
     }
+
+
 
 }

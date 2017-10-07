@@ -1,5 +1,6 @@
 package michael.com.trickortreat;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.location.Address;
@@ -22,13 +23,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 
 public class CreateEvent extends DialogFragment implements AsyncResponse {
 
     RatingBar rating;
-    EditText addr,comment;
+    private EditText addr,comment;
+    private String locality; //Locality passed from MainActivity
+    private double latitude,longitude; //latlng passed from mapsactivity
+
 
     public CreateEvent() {
         // Required empty public constructor
@@ -41,11 +46,16 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
         View rootView = inflater.inflate(R.layout.fragment_create_event,container);
 
 
-        Bundle bundle = getArguments(); //Retrieves address from MapsActivity
-        String address = bundle.getString("Address");
+        Bundle bundle = getArguments();
+        String address = bundle.getString("Address"); //Retrieves address from MapsActivity
+        locality = bundle.getString("Locality"); //Retrieves locality from MapsActivity
+        latitude = bundle.getDouble("Latitude");//Retrieves latitude from MapsActivity
+        longitude = bundle.getDouble("Longitude");//Retrieves longitude from MapsActivity
         addr = rootView.findViewById(R.id.address); //Bar to edit the address
         rating = rootView.findViewById(R.id.rating); //Rating from 0-5
         comment = rootView.findViewById(R.id.comment);
+
+
         Button submit = rootView.findViewById(R.id.submit);
         addr.setText(address);
 
@@ -55,6 +65,7 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
             public void onClick(View view) {
                 AsyncSearch asyncThread = new AsyncSearch();
                 asyncThread.execute(addr.getText().toString());
+
             }
         });
 
@@ -82,14 +93,10 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
             //Send database to firebase if address exists
             DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference();
             String key = dataRef.push().getKey();
-            Review review = new Review(stars,comments,addrText);
+            Review review = new Review(stars,comments,addrText,locality,latitude,longitude);
             dataRef.child(key).setValue(review);
 
-            Bundle rev = new Bundle();
-            rev.putBoolean("Review",true);
-            rev.putString("Address",addrText);
-            rev.putDouble("Latitude",address.getLatitude());
-            rev.putDouble("Longitude",address.getLongitude());
+            dismiss();
 
 
 
@@ -122,6 +129,9 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
     //Async check if the altered address exists
     public class AsyncSearch extends AsyncTask<String,List<Address>,Void>{
 
+
+
+
         @Override
         protected Void doInBackground(String... strings) {
             Geocoder geocoder = new Geocoder(getActivity());
@@ -137,6 +147,8 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
 
             return null;
         }
+
+
 
 
         private void onPostExecute(List<Address> addresses) {

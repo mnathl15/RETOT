@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
 
     private static final int NUM_ADDRESSES = 2;
     AsyncSearch async;
+    EditText search;
 
 
 
@@ -37,7 +38,8 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
 
 
         final Button start = (Button)findViewById(R.id.start);
-        final EditText search = (EditText)findViewById(R.id.locality_search);
+        search = (EditText)findViewById(R.id.locality_search);
+
 
 
         start.setOnClickListener(new View.OnClickListener() {
@@ -56,10 +58,11 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
     @Override
     public void sendLatlng(LatLng latlng) {
 
-        System.out.println("Your latlng is: " + latlng);
+        String locality = search.getText().toString();
         Intent mapIntent = new Intent(MainActivity.this,MapsActivity.class);
         mapIntent.putExtra("Latitude", latlng.latitude); //Sends the latitude and longitude to the next intent
         mapIntent.putExtra("Longitude",latlng.longitude);
+        mapIntent.putExtra("Locality",locality);
         startActivity(mapIntent);
 
 
