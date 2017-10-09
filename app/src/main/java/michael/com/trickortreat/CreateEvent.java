@@ -32,8 +32,11 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
     RatingBar rating;
     private EditText addr,comment;
     private String locality; //Locality passed from MainActivity
+    private String initAddress; //Initial address passed in from MapsActivity
     private double latitude,longitude; //latlng passed from mapsactivity
 
+    /*NOTE #1:  Having issue; addresses allowed on tap are being called not addresses later on, using boolean
+    to say that its already been confirmed an address for now*/
 
     public CreateEvent() {
         // Required empty public constructor
@@ -47,7 +50,8 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
 
 
         Bundle bundle = getArguments();
-        String address = bundle.getString("Address"); //Retrieves address from MapsActivity
+        initAddress = bundle.getString("Address"); //Retrieves address from MapsActivity
+        System.out.println("First test: " + initAddress);
         locality = bundle.getString("Locality"); //Retrieves locality from MapsActivity
         latitude = bundle.getDouble("Latitude");//Retrieves latitude from MapsActivity
         longitude = bundle.getDouble("Longitude");//Retrieves longitude from MapsActivity
@@ -57,7 +61,7 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
 
 
         Button submit = rootView.findViewById(R.id.submit);
-        addr.setText(address);
+        addr.setText(initAddress);
 
         //Start a thread on click submit to make sure address exists
         submit.setOnClickListener(new View.OnClickListener() {
@@ -81,14 +85,18 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
     public void sendToFirebase(Address address) {
         String comments = comment.getText().toString();
         String addrText = addr.getText().toString();
-        float stars = rating.getNumStars();
+        float stars = rating.getRating();
         boolean commentExists = !comments.isEmpty();
         boolean rated = rating.isEnabled();
 
 
+
+        //#1
+        boolean sameAddress = (addr.getText().toString()).equals(initAddress);
+
         //Checks if the address and comment  exists and there is a rating
-        if(address !=null && commentExists && rated){
-            System.out.println(comments + " " + addrText + " " + stars);
+        if((sameAddress || address !=null)  && commentExists && rated ){
+
 
             //Send database to firebase if address exists
             DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference();
@@ -101,6 +109,7 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
 
 
         }
+        //If there is an issue
         else{
 
         }

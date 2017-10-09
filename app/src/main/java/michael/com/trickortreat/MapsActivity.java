@@ -29,10 +29,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap map;
     private LatLng latlng;
-    private LocationFinder loc;
-    String locality;
-    double latitude,longitude;
 
+    String locality;
+    double latitudeTown,longitudeTown; //latitudes of locality
+    SwipeRefreshLayout swiper;
 
 
     @Override
@@ -40,16 +40,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+
+        swiper = findViewById(R.id.swiper);
+        swiper.setOnRefreshListener(this);
+
+
         Intent infoIntent = getIntent(); //Gets extra data sent from MainActivity
-        latitude = infoIntent.getDoubleExtra("Latitude",0);
-        longitude = infoIntent.getDoubleExtra("Longitude",0);
+        latitudeTown = infoIntent.getDoubleExtra("Latitude",0);
+        longitudeTown = infoIntent.getDoubleExtra("Longitude",0);
         locality = infoIntent.getStringExtra("Locality");
 
-        this.latlng = new LatLng(latitude,longitude);
+        this.latlng = new LatLng(latitudeTown,longitudeTown);
 
-
-        loc = new LocationFinder();
-        loc.asyncResp = this;
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -106,6 +108,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         CreateEvent createEvent = new CreateEvent();
         Bundle bundle = new Bundle();
 
+        double latitude = address.getLatitude(); //Latitude of clicked address
+        double longitude = address.getLongitude(); //Longitude of clicked address
+
+
+
         //Sends location details to CreateEvent dialogFragment
         bundle.putString("Address",address.getAddressLine(0));
         bundle.putString("Locality",locality);
@@ -115,17 +122,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         createEvent.setArguments(bundle);
         createEvent.show(getFragmentManager(),"DialogFragment");
         //When its cancelled or dismissed, receive information and place it on map
-        createEvent.onCancel(new DialogInterface() {
-            @Override
-            public void cancel() {
-
-            }
-
-            @Override
-            public void dismiss() {
-
-            }
-        });
 
     }
 
@@ -149,10 +145,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //Updates the map
     public void updateUI(){
-        DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference();
+        final DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference();
         dataRef.orderByChild("locality").equalTo(locality).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
                 Review review  = dataSnapshot.getValue(Review.class);
                 LatLng latlng = new LatLng(review.getLatitude(),review.getLongitude());
 
@@ -182,6 +179,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        swiper.setRefreshing(false);
+
 
     }
 
@@ -207,6 +206,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         private void onPostExecute(Address address) {
+
 
             //Opens the dialog fragment for creating a review
             openDialog(address);
