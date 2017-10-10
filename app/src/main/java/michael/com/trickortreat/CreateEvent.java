@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,13 +28,15 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 
-public class CreateEvent extends DialogFragment implements AsyncResponse {
+public class CreateEvent extends DialogFragment {
 
     RatingBar rating;
     private EditText addr,comment;
     private String locality; //Locality passed from MainActivity
     private String initAddress; //Initial address passed in from MapsActivity
     private double latitude,longitude; //latlng passed from mapsactivity
+    ProgressBar loading;
+    TextView error;
 
     /*NOTE #1:  Having issue; addresses allowed on tap are being called not addresses later on, using boolean
     to say that its already been confirmed an address for now*/
@@ -58,6 +61,10 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
         addr = rootView.findViewById(R.id.address); //Bar to edit the address
         rating = rootView.findViewById(R.id.rating); //Rating from 0-5
         comment = rootView.findViewById(R.id.comment);
+        loading = rootView.findViewById(R.id.loading);
+
+        loading.setVisibility(View.INVISIBLE);
+        error = rootView.findViewById(R.id.error);
 
 
         Button submit = rootView.findViewById(R.id.submit);
@@ -67,6 +74,7 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                loading.setVisibility(View.VISIBLE);
                 AsyncSearch asyncThread = new AsyncSearch();
                 asyncThread.execute(addr.getText().toString());
 
@@ -79,75 +87,27 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
         return rootView;
     }
 
-    //Sends boolean from async thread to see if altered location exists
-    //Sends data to firebase
-    @Override
-    public void sendToFirebase(Address address) {
-        String comments = comment.getText().toString();
-        String addrText = addr.getText().toString();
-        float stars = rating.getRating();
-        boolean commentExists = !comments.isEmpty();
-        boolean rated = rating.isEnabled();
 
-
-
-        //#1
-        boolean sameAddress = (addr.getText().toString()).equals(initAddress);
-
-        //Checks if the address and comment  exists and there is a rating
-        if((sameAddress || address !=null)  && commentExists && rated ){
-
-
-            //Send database to firebase if address exists
-            DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference();
-            String key = dataRef.push().getKey();
-            Review review = new Review(stars,comments,addrText,locality,latitude,longitude);
-            dataRef.child(key).setValue(review);
-
-            dismiss();
-
-
-
-        }
-        //If there is an issue
-        else{
-
-        }
-    }
-
-
-
-    @Override
-    public void sendLatlng(LatLng latLng) {
-
-    }
-
-    @Override
-    public void openDialog(Address address) {
-
-    }
-
-
-
-    @Override
-    public void issue() {
-
-    }
 
 
     //Async check if the altered address exists
-    public class AsyncSearch extends AsyncTask<String,List<Address>,Void>{
+    public class AsyncSearch extends AsyncTask<String,List<Address>,Address>{
 
 
 
 
         @Override
-        protected Void doInBackground(String... strings) {
+        protected Address doInBackground(String... strings) {
             Geocoder geocoder = new Geocoder(getActivity());
 
             try {
                 List<Address> addresses = geocoder.getFromLocationName(strings[0], 2);
-                onPostExecute(addresses);
+                if(addresses.size() > 0){
+                    return addresses.get(0);
+                }
+                else{
+                    return null;
+                }
 
             }catch(IOException io){
                 io.printStackTrace();
@@ -160,14 +120,54 @@ public class CreateEvent extends DialogFragment implements AsyncResponse {
 
 
 
-        private void onPostExecute(List<Address> addresses) {
 
-           if(addresses.size() >0){
-               sendToFirebase(addresses.get(0));
-           }
-           else{
-               sendToFirebase(null);
-        }
+        //Sends boolean from async thread to see if altered location exists
+        //Sends data to firebase
+        @Override
+        protected void onPostExecute(Address address) {
+
+
+
+            super.onPostExecute(address);
+            String comments = comment.getText().toString();
+            String addrText = addr.getText().toString();
+            float stars = rating.getRating();
+            boolean commentExists = !comments.isEmpty();
+            boolean rated = rating.isEnabled();
+
+
+            //#1
+            boolean sameAddress = (addr.getText().toString()).equals(initAddress);
+
+            //Checks if the address and comment  exists and there is a rating
+            if((sameAddress || address !=null)  && commentExists && rated ){
+
+
+                //Send database to firebase if address exists
+                DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference();
+                String key = dataRef.push().getKey();
+
+                Review review = new Review(stars,comments,addrText,locality,latitude,longitude);
+                dataRef.child(key).setValue(review);
+                loading.setVisibility(View.INVISIBLE);
+                dismiss();
+
+
+            }
+            //If there is an issue
+            else{
+                loading.setVisibility(View.INVISIBLE);
+
+                if(address==null){
+                    error.setText("Address does not exist");
+                }
+                else{
+                    error.setText("There is something wrong with your form");
+                }
+                //SHOW ERROR MESSAGE
+            }
+
+
         }
     }
 

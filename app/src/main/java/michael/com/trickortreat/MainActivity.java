@@ -9,9 +9,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,6 +27,9 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
     private static final int NUM_ADDRESSES = 2;
     AsyncSearch async;
     EditText search;
+    TextView error;
+    ProgressBar loading;
+
 
 
 
@@ -33,12 +40,16 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
 
 
         async = new AsyncSearch(); //Declares asynctask class object
-        async.asyncResp = this; //Sets async.asynResp to current AsyncResponse object
+
+
 
 
 
         final Button start = (Button)findViewById(R.id.start);
         search = (EditText)findViewById(R.id.locality_search);
+        error = (TextView)findViewById(R.id.error);
+        loading = (ProgressBar)findViewById(R.id.loading);
+        loading.setVisibility(View.INVISIBLE);
 
 
 
@@ -46,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
             @Override
             public void onClick(View view) {
                 String locality = search.getText().toString();
+                loading.setVisibility(View.VISIBLE); //Makes loading animation visible
                 AsyncSearch async = new AsyncSearch();
                 async.execute(locality);
 
@@ -53,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
             }
         });
     }
+
 
     //AsyncReponse interface override for retrieving LatLng object
     @Override
@@ -70,9 +83,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
     //AsyncResponse interface override for issue retrieving LatLng object
     @Override
     public void issue() {
-
-        System.out.println("Problem finding your location");
-
     }
 
     //Not needed for this class
@@ -84,13 +94,12 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
     public void sendToFirebase(Address address) {}
 
     //Async Tasks the locality search because of possible frame skips
-    public class AsyncSearch extends AsyncTask<String,Void,Void>{
+    public class AsyncSearch extends AsyncTask<String,String,String>{
 
 
-        public AsyncResponse asyncResp = null;
 
         @Override
-        protected Void doInBackground(String ... strings) {
+        protected String doInBackground(String ... strings) {
             Geocoder geocoder = new Geocoder(getApplicationContext());
             try {
                 List<Address> addresses = geocoder.getFromLocationName(strings[0],NUM_ADDRESSES);
@@ -100,11 +109,17 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
                 */
                 if(addresses.size() > 0){
                     LatLng latLng = new LatLng(addresses.get(0).getLatitude(),addresses.get(0).getLongitude());
-                    onPostExecute(latLng);
+                    end(latLng);
+                    //No error message displayed
+                    return("");
                 }
                 else{
-                    onPostExecute();
+                    //Error message displayed
+                    return("There was an error");
                 }
+
+
+
 
             }catch(IOException io){
                 io.printStackTrace();
@@ -112,15 +127,18 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
             return null;
         }
 
-        protected void onPostExecute(LatLng latLng) {
+        protected void end(LatLng latLng) {
             sendLatlng(latLng);
 
         }
 
 
         //Declares an issue
-        protected void onPostExecute(){
-            issue();
+        protected void onPostExecute(String result){
+            super.onPostExecute(result);
+            loading.setVisibility(View.INVISIBLE);
+            error.setText("Can't find that location");
+
         }
 
     }
