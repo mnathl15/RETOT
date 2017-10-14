@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 //1. CANCELLATION OF ASYNC THREAD
-public class MainActivity extends AppCompatActivity implements AsyncResponse{
+public class MainActivity extends AppCompatActivity{
 
     private static final int NUM_ADDRESSES = 2;
     AsyncSearch async;
@@ -67,10 +67,9 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
     }
 
 
-    //AsyncReponse interface override for retrieving LatLng object
-    @Override
-    public void sendLatlng(LatLng latlng) {
+    //Sends LatLng to MapActivity from asyncTask
 
+    public void sendLatlng(LatLng latlng) {
         String locality = search.getText().toString();
         Intent mapIntent = new Intent(MainActivity.this,MapsActivity.class);
         mapIntent.putExtra("Latitude", latlng.latitude); //Sends the latitude and longitude to the next intent
@@ -79,19 +78,8 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
         startActivity(mapIntent);
 
 
-    }
-    //AsyncResponse interface override for issue retrieving LatLng object
-    @Override
-    public void issue() {
-    }
 
-    //Not needed for this class
-    @Override
-    public void openDialog(Address address) {}
-
-    //Not needed for this class
-    @Override
-    public void sendToFirebase(Address address) {}
+    }
 
     //Async Tasks the locality search because of possible frame skips
     public class AsyncSearch extends AsyncTask<String,String,String>{

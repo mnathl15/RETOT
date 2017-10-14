@@ -15,6 +15,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -25,7 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.io.IOException;
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,AsyncResponse,SwipeRefreshLayout.OnRefreshListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,SwipeRefreshLayout.OnRefreshListener {
 
     private GoogleMap map;
     private LatLng latlng;
@@ -79,57 +80,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onMapClick(LatLng latlng) {
 
-                LocationFinder locThread = new LocationFinder(); //Need to create a new async thread each time
-                locThread.execute(latlng); //Asynchronous
+                MapClickAsync mapClickThread = new MapClickAsync(); //Need to create a new async thread each time
+                mapClickThread.execute(latlng); //Asynchronous
 
             }
         });
-        //LatLng sydney = new LatLng(-34, 151);
+        /*
+        When user clicks a marker,
+        a dialogfragment will pop up with all the the reviews from that location
+         */
+        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                MarkerClickAsync markClickAsync = new MarkerClickAsync();
+                markClickAsync.execute(marker.getPosition());
 
-        //map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-    }
-
-    @Override
-    public void sendToFirebase(Address address) {
-
-    }
-
-    ///Inherited from AsyncResponse interface
-    @Override
-    public void sendLatlng(LatLng latLng) {
-
-
-    }
-
-    ///Inherited from AsyncResponse interface
-    //Sends address to CreateEvent DialogFragment
-    @Override
-    public void openDialog(final Address address) {
-        CreateEvent createEvent = new CreateEvent();
-        Bundle bundle = new Bundle();
-
-        double latitude = address.getLatitude(); //Latitude of clicked address
-        double longitude = address.getLongitude(); //Longitude of clicked address
-
-
-
-        //Sends location details to CreateEvent dialogFragment
-        bundle.putString("Address",address.getAddressLine(0));
-        bundle.putString("Locality",locality);
-        bundle.putDouble("Latitude",latitude);
-        bundle.putDouble("Longitude",longitude);
-
-        createEvent.setArguments(bundle);
-        createEvent.show(getFragmentManager(),"DialogFragment");
-        //When its cancelled or dismissed, receive information and place it on map
+                return false;
+            }
+        });
 
     }
 
-    ///Inherited from AsyncResponse interface
-    @Override
-    public void issue() {
 
-    }
+
+
 
     //Inherited from onSwipeRefresh
     @Override
@@ -185,18 +159,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    public class LocationFinder extends AsyncTask<LatLng,Void,Void>{
+    //AsyncTask to translate map click into an address
+    public class MapClickAsync extends AsyncTask<LatLng,Void,Address>{
 
 
-        public AsyncResponse asyncResp = null;
         @Override
-        protected Void doInBackground(LatLng... latlngs) {
+        protected Address doInBackground(LatLng... latlngs) {
 
             Geocoder geocoder = new Geocoder(getApplicationContext());
             try {
                 List<Address> addresses = geocoder.getFromLocation(latlngs[0].latitude, latlngs[0].longitude, 2);
                 Address address = addresses.get(0);
-                onPostExecute(address);
+                return address;
             }catch(IOException io){
                 io.printStackTrace();
             }
@@ -205,12 +179,58 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
 
-        private void onPostExecute(Address address) {
+        protected void onPostExecute(Address address) {
+            CreateEvent createEvent = new CreateEvent();
+            Bundle bundle = new Bundle();
+
+            double latitude = address.getLatitude(); //Latitude of clicked address
+            double longitude = address.getLongitude(); //Longitude of clicked address
 
 
-            //Opens the dialog fragment for creating a review
-            openDialog(address);
+
+            //Sends location details to CreateEvent dialogFragment
+            bundle.putString("Address",address.getAddressLine(0));
+            bundle.putString("Locality",locality);
+            bundle.putDouble("Latitude",latitude);
+            bundle.putDouble("Longitude",longitude);
+
+            createEvent.setArguments(bundle);
+            createEvent.show(getFragmentManager(),"DialogFragment");
+            //When its cancelled or dismissed, receive information and place it on map
+
+
         }
+    }
+    //AsyncTask to get address when clicking on a marker,
+    public class MarkerClickAsync extends AsyncTask<LatLng,Void,Address>{
+        @Override
+        protected Address doInBackground(LatLng... latlngs) {
+
+            Geocoder geocoder = new Geocoder(getApplicationContext());
+            try {
+                List<Address> addresses = geocoder.getFromLocation(latlngs[0].latitude, latlngs[0].longitude, 2);
+                Address address = addresses.get(0);
+                return address;
+            }catch(IOException io){
+                io.printStackTrace();
+            }
+
+            return null;
+        }
+
+        //Sends address to ShowEvents dialogFragment
+        protected void onPostExecute(Address address) {
+            Bundle bundle = new Bundle();
+            bundle.putString("Address",address.getAddressLine(0));
+
+
+            ShowEvents showEvents = new ShowEvents();
+            showEvents.setArguments(bundle);
+            showEvents.show(getSupportFragmentManager(),"Events");
+
+        }
+
+
     }
 
 
