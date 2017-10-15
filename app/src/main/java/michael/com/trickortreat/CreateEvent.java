@@ -1,14 +1,10 @@
 package michael.com.trickortreat;
 
-import android.app.Activity;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +13,11 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 
@@ -58,7 +51,7 @@ public class CreateEvent extends DialogFragment {
         locality = bundle.getString("Locality"); //Retrieves locality from MapsActivity
         latitude = bundle.getDouble("Latitude");//Retrieves latitude from MapsActivity
         longitude = bundle.getDouble("Longitude");//Retrieves longitude from MapsActivity
-        addr = rootView.findViewById(R.id.address); //Bar to edit the address
+        addr = rootView.findViewById(R.id.comments); //Bar to edit the address
         rating = rootView.findViewById(R.id.rating); //Rating from 0-5
         comment = rootView.findViewById(R.id.comment);
         loading = rootView.findViewById(R.id.loading);

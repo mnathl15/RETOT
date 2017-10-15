@@ -24,22 +24,25 @@ public class Review {
         this.longitude = longitude;
     }
 
+    //Second constructor to show events
+    public Review(float stars,String comments, String address){
+        this.stars = stars;
+        this.comments = comments;
+        this.address = address;
+    }
+
 
     public float getStars() {
         return stars;
     }
 
-    public void setStars(float stars) {
-        this.stars = stars;
-    }
 
-    public String getReview() {
+
+    public String getComments() {
         return comments;
     }
 
-    public void setReview(String review) {
-        this.comments = comments;
-    }
+
 
     public double getLatitude(){
         return latitude;
@@ -49,9 +52,7 @@ public class Review {
     }
 
 
-    public String getLocality() {
-        return locality;
-    }
+
 
     public String getAddress() {
         return address;

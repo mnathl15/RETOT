@@ -15,7 +15,7 @@
         android:layout_centerHorizontal="true" />
 
     <EditText
-        android:id="@+id/address"
+        android:id="@+id/comments"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="105dp"
@@ -28,7 +28,7 @@
         android:id="@+id/rating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/address"
+        android:layout_below="@+id/comments"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp" />
 
@@ -36,7 +36,7 @@
         android:id="@+id/comment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/address"
+        android:layout_alignStart="@+id/comments"
         android:layout_below="@+id/rating"
         android:layout_marginTop="24dp"
         android:ems="10"
