@@ -53,6 +53,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         this.latlng = new LatLng(latitudeTown,longitudeTown);
 
+        System.out.println("EXISTISIS");
+
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -112,13 +114,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    public void onResume(){
+        super.onResume();
+
+        updateUI();
+
+    }
+
     public void onStart(){
         super.onStart();
+
         updateUI();
     }
 
     //Updates the map
     public void updateUI(){
+
         final DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference();
         dataRef.orderByChild("locality").equalTo(locality).addChildEventListener(new ChildEventListener() {
             @Override
@@ -129,6 +140,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 //Adds reviews that are in your locality
                 map.addMarker(new MarkerOptions().position(latlng).title(review.getAddress()));
+                System.out.println("MARKER ADDED @ " + latlng);
 
             }
 

@@ -56,8 +56,8 @@ public class AdapterClass  extends RecyclerView.Adapter<AdapterClass.ViewHolder>
         TextView comments = holder.comments;
         RatingBar stars = holder.stars;
 
-        address.setText(review.getAddress());
-        comments.setText(review.getComments());
+        address.setText("Address: " + review.getAddress());
+        comments.setText("Comments : "  + review.getComments());
         stars.setRating(review.getStars());
 
     }

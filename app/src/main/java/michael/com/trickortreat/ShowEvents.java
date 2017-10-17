@@ -64,7 +64,7 @@ public class ShowEvents extends DialogFragment {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Review review = dataSnapshot.getValue(Review.class);
-
+                System.out.println(review.getAddress() + " " + review.getComments());
 
                 //If a review found, add it to the arraylist and notifies the adapter of the change
                 reviews.add(review);

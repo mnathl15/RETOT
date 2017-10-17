@@ -19,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 
 public class CreateEvent extends DialogFragment {
@@ -91,12 +92,17 @@ public class CreateEvent extends DialogFragment {
 
         @Override
         protected Address doInBackground(String... strings) {
-            Geocoder geocoder = new Geocoder(getActivity());
+            Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
 
             try {
-                List<Address> addresses = geocoder.getFromLocationName(strings[0], 2);
+                List<Address> addresses = geocoder.getFromLocationName(strings[0], 4);
+
+
+
                 if(addresses.size() > 0){
-                    return addresses.get(0);
+
+                    Address address = addresses.get(0);
+                    return address;
                 }
                 else{
                     return null;
@@ -130,10 +136,10 @@ public class CreateEvent extends DialogFragment {
 
 
             //#1
-            boolean sameAddress = (addr.getText().toString()).equals(initAddress);
+            //boolean sameAddress = (addr.getText().toString()).equals(initAddress);
 
             //Checks if the address and comment  exists and there is a rating
-            if((sameAddress || address !=null)  && commentExists && rated ){
+            if(address !=null  && commentExists && rated ){
 
 
                 //Send database to firebase if address exists
@@ -153,6 +159,7 @@ public class CreateEvent extends DialogFragment {
 
                 if(address==null){
                     error.setText("Address does not exist");
+
                 }
                 else{
                     error.setText("There is something wrong with your form");

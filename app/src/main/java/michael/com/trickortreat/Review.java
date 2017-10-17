@@ -50,6 +50,7 @@ public class Review {
     public double getLongitude(){
         return longitude;
     }
+    public String getLocality(){return locality;}
 
 
 
@@ -58,7 +59,5 @@ public class Review {
         return address;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+
 }
