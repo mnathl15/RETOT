@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity{
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String locality = search.getText().toString();
+                String locality = search.getText().toString().toLowerCase();
                 loading.setVisibility(View.VISIBLE); //Makes loading animation visible
                 AsyncSearch async = new AsyncSearch();
                 async.execute(locality);
@@ -70,15 +70,12 @@ public class MainActivity extends AppCompatActivity{
     //Sends LatLng to MapActivity from asyncTask
 
     public void sendLatlng(LatLng latlng) {
-        String locality = search.getText().toString();
+        String locality = search.getText().toString().toLowerCase();
         Intent mapIntent = new Intent(MainActivity.this,MapsActivity.class);
         mapIntent.putExtra("Latitude", latlng.latitude); //Sends the latitude and longitude to the next intent
         mapIntent.putExtra("Longitude",latlng.longitude);
         mapIntent.putExtra("Locality",locality);
         startActivity(mapIntent);
-
-
-
     }
 
     //Async Tasks the locality search because of possible frame skips

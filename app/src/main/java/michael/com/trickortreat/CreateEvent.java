@@ -52,7 +52,7 @@ public class CreateEvent extends DialogFragment {
         locality = bundle.getString("Locality"); //Retrieves locality from MapsActivity
         latitude = bundle.getDouble("Latitude");//Retrieves latitude from MapsActivity
         longitude = bundle.getDouble("Longitude");//Retrieves longitude from MapsActivity
-        addr = rootView.findViewById(R.id.comments); //Bar to edit the address
+        addr = rootView.findViewById(R.id.address); //Bar to edit the address
         rating = rootView.findViewById(R.id.rating); //Rating from 0-5
         comment = rootView.findViewById(R.id.comment);
         loading = rootView.findViewById(R.id.loading);
@@ -146,7 +146,7 @@ public class CreateEvent extends DialogFragment {
                 DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference();
                 String key = dataRef.push().getKey();
 
-                Review review = new Review(stars,comments,addrText,locality,latitude,longitude);
+                Review review = new Review(stars,comments,addrText,locality.toLowerCase(),latitude,longitude);
                 dataRef.child(key).setValue(review);
                 loading.setVisibility(View.INVISIBLE);
                 dismiss();
