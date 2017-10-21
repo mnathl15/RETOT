@@ -4,11 +4,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
+
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
+
+import android.support.v7.app.AlertDialog;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -26,14 +27,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.io.IOException;
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,SwipeRefreshLayout.OnRefreshListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap map;
     private LatLng latlng;
 
     String locality;
     double latitudeTown,longitudeTown; //latitudes of locality
-    SwipeRefreshLayout swiper;
+
 
 
     @Override
@@ -42,8 +43,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
 
 
-        swiper = findViewById(R.id.swiper);
-        swiper.setOnRefreshListener(this);
+
 
 
         Intent infoIntent = getIntent(); //Gets extra data sent from MainActivity
@@ -53,7 +53,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         this.latlng = new LatLng(latitudeTown,longitudeTown);
 
-        System.out.println("EXISTISIS");
+
 
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -72,7 +72,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(final GoogleMap map) {
         this.map = map;
 
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng,18.0f));
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng,19.0f));
 
         /*
         On screen click, open a dialogfragment that will allow user to create
@@ -93,9 +93,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
          */
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
-            public boolean onMarkerClick(Marker marker) {
-                MarkerClickAsync markClickAsync = new MarkerClickAsync();
-                markClickAsync.execute(marker.getPosition());
+            public boolean onMarkerClick(final Marker marker) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+
+
+                //When marker is clicked, a dialog pops up to see if user wants to submit a review or look at reviews
+                builder.setTitle("Trick or Treat?").setPositiveButton("Add review", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                MapClickAsync mapClickThread = new MapClickAsync(); //Need to create a new async thread each time
+                                mapClickThread.execute(marker.getPosition());
+                            }
+                        }).setNegativeButton("View reviews", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        MarkerClickAsync markClickAsync = new MarkerClickAsync();
+                        markClickAsync.execute(marker.getPosition());
+                    }
+                     }).setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }}).create().show();
+
+
+
+
 
                 return false;
             }
@@ -104,15 +127,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-
-
-
-    //Inherited from onSwipeRefresh
-    @Override
-    public void onRefresh() {
-        updateUI();
-
-    }
 
     public void onResume(){
         super.onResume();
@@ -140,7 +154,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 //Adds reviews that are in your locality
                 map.addMarker(new MarkerOptions().position(latlng).title(review.getAddress()));
-                System.out.println("MARKER ADDED @ " + latlng);
+
 
             }
 
@@ -165,7 +179,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        swiper.setRefreshing(false);
+
 
 
     }
@@ -193,6 +207,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         protected void onPostExecute(Address address) {
             CreateEvent createEvent = new CreateEvent();
+
             Bundle bundle = new Bundle();
 
             double latitude = address.getLatitude(); //Latitude of clicked address
@@ -207,7 +222,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             bundle.putDouble("Longitude",longitude);
 
             createEvent.setArguments(bundle);
-            createEvent.show(getFragmentManager(),"DialogFragment");
+            //In case the fragment is already there
+            if(!createEvent.isAdded()){
+                createEvent.show(getFragmentManager(),"DialogFragment");
+            }
+
             //When its cancelled or dismissed, receive information and place it on map
 
 
@@ -222,6 +241,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             try {
                 List<Address> addresses = geocoder.getFromLocation(latlngs[0].latitude, latlngs[0].longitude, 2);
                 Address address = addresses.get(0);
+                System.out.println("Here address: " + address.getAddressLine(0));
                 return address;
             }catch(IOException io){
                 io.printStackTrace();
@@ -234,11 +254,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         protected void onPostExecute(Address address) {
             Bundle bundle = new Bundle();
             bundle.putString("Address",address.getAddressLine(0));
+            /*OptionsDialog opt = new OptionsDialog();
 
+            if(!opt.isAdded()){
+                opt.setArguments(bundle);
+                opt.show(getSupportFragmentManager(),"Options");
+            }*/
 
-            ShowEvents showEvents = new ShowEvents();
+           ShowEvents showEvents = new ShowEvents();
             showEvents.setArguments(bundle);
-            showEvents.show(getSupportFragmentManager(),"Events");
+            //In case the fragment is already there
+            if(!showEvents.isAdded()){
+                showEvents.show(getSupportFragmentManager(),"Events");
+            }
+
 
         }
 

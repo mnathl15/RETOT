@@ -58,13 +58,13 @@ public class ShowEvents extends DialogFragment {
         //Retrieves address from MapActivity
         this.address = bundle.getString("Address");
         DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference();
-
+        System.out.println(address);
         //Searches for all reviews from selected marker
         dataRef.orderByChild("address").equalTo(address).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Review review = dataSnapshot.getValue(Review.class);
-                System.out.println(review.getAddress() + " " + review.getComments());
+
 
                 //If a review found, add it to the arraylist and notifies the adapter of the change
                 reviews.add(review);

@@ -125,7 +125,9 @@ public class MainActivity extends AppCompatActivity{
         protected void onPostExecute(String result){
             super.onPostExecute(result);
             loading.setVisibility(View.INVISIBLE);
-            error.setText("Can't find that location");
+            if(!result.equals("")){
+                error.setText("There was an error");
+            }
 
         }
 
