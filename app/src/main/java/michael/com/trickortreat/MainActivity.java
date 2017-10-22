@@ -6,12 +6,14 @@ import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -39,6 +41,9 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
 
 
+
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setActionBar(toolbar);
         async = new AsyncSearch(); //Declares asynctask class object
 
 
@@ -51,15 +56,30 @@ public class MainActivity extends AppCompatActivity{
         loading = (ProgressBar)findViewById(R.id.loading);
         loading.setVisibility(View.INVISIBLE);
 
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                error.setText("");
+            }
+        });
+
 
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String locality = search.getText().toString().toLowerCase();
+                String locality = search.getText().toString().toLowerCase().trim();
                 loading.setVisibility(View.VISIBLE); //Makes loading animation visible
                 AsyncSearch async = new AsyncSearch();
-                async.execute(locality);
+                if(!locality.trim().equals("")){
+                    async.execute(locality);
+                }
+                else{
+                    Toast.makeText(getApplicationContext(),"There was an error",Toast.LENGTH_SHORT).show();
+                    loading.setVisibility(View.INVISIBLE);
+
+                }
+
 
                 //1
             }
@@ -70,7 +90,7 @@ public class MainActivity extends AppCompatActivity{
     //Sends LatLng to MapActivity from asyncTask
 
     public void sendLatlng(LatLng latlng) {
-        String locality = search.getText().toString().toLowerCase();
+        String locality = search.getText().toString().toLowerCase().trim();
         Intent mapIntent = new Intent(MainActivity.this,MapsActivity.class);
         mapIntent.putExtra("Latitude", latlng.latitude); //Sends the latitude and longitude to the next intent
         mapIntent.putExtra("Longitude",latlng.longitude);
@@ -80,8 +100,6 @@ public class MainActivity extends AppCompatActivity{
 
     //Async Tasks the locality search because of possible frame skips
     public class AsyncSearch extends AsyncTask<String,String,String>{
-
-
 
         @Override
         protected String doInBackground(String ... strings) {
@@ -123,7 +141,8 @@ public class MainActivity extends AppCompatActivity{
             super.onPostExecute(result);
             loading.setVisibility(View.INVISIBLE);
             if(!result.equals("")){
-                error.setText("There was an error");
+                Toast.makeText(getApplicationContext(),"There was an error",Toast.LENGTH_SHORT).show();
+
             }
 
         }

@@ -4,28 +4,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorSecondary"
+
     tools:context="michael.com.trickortreat.MainActivity">
 
+    <Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/colorPrimary">
+
+
+    </Toolbar>
 
     <Button
         android:id="@+id/start"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/button"
+        android:layout_alignBaseline="@+id/error"
+        android:layout_alignBottom="@+id/error"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/button_state"
         android:text="Start"
-        android:layout_above="@+id/error"
-        android:layout_centerHorizontal="true" />
+        android:textColor="@color/textColorSecondary" />
 
     <EditText
         android:id="@+id/locality_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="89dp"
+        android:layout_below="@+id/toolbar"
+
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="58dp"
         android:ems="10"
-        android:hint="Enter your locality"
         android:inputType="textPersonName"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:textAlignment="center"
+        android:textColor="@color/textColorSecondary"
+
+        android:textColorHint="@color/textColorSecondary" />
 
     <TextView
         android:id="@+id/error"
@@ -33,7 +52,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="40dp" />
+        android:layout_marginBottom="30dp"
+        android:textColor="@color/textColorSecondary" />
 
     <ProgressBar
         android:id="@+id/loading"
@@ -42,6 +62,34 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/start"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="82dp" />
+        android:layout_marginBottom="82dp"
+        android:indeterminateTint="@color/colorSecondaryDark" />
+
+    <TextView
+        android:id="@+id/instr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginTop="22dp"
+        android:text="Enter your address,town,etc.."
+        android:fontFamily="casual"
+        android:textAlignment="center"
+        android:textColor="@color/textColorSecondary"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/toolbar_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/instr"
+        android:layout_alignParentStart="true"
+        android:fontFamily="casual"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="Trick Or Treat"
+        android:textAlignment="center"
+        android:textColor="@color/colorSecondary"
+        android:textSize="28dp" />
 
 </RelativeLayout>
