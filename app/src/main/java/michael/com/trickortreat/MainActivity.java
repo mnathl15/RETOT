@@ -89,12 +89,16 @@ public class MainActivity extends AppCompatActivity{
 
     //Sends LatLng to MapActivity from asyncTask
 
-    public void sendLatlng(LatLng latlng) {
-        String locality = search.getText().toString().toLowerCase().trim();
+    public void sendLatlng(LatLng latlng,String locality) {
+
+
         Intent mapIntent = new Intent(MainActivity.this,MapsActivity.class);
         mapIntent.putExtra("Latitude", latlng.latitude); //Sends the latitude and longitude to the next intent
         mapIntent.putExtra("Longitude",latlng.longitude);
         mapIntent.putExtra("Locality",locality);
+
+
+
         startActivity(mapIntent);
     }
 
@@ -107,12 +111,27 @@ public class MainActivity extends AppCompatActivity{
             try {
                 List<Address> addresses = geocoder.getFromLocationName(strings[0],NUM_ADDRESSES);
 
+
+
                 /*If the address does exist, call onPostExecute(LatLng) and send data back to MainActivity
                 Otherwise call another onPostExecute to say that address doesn't exist
                 */
                 if(addresses.size() > 0){
+
+                    if(addresses.get(0).getLocality() == null){
+
+                        return ("Please enter a more specific location");
+                    }
+                    String locality = addresses.get(0).getLocality().toLowerCase().trim();
                     LatLng latLng = new LatLng(addresses.get(0).getLatitude(),addresses.get(0).getLongitude());
-                    end(latLng);
+                    sendLatlng(latLng,locality);
+                    //If a specific address can be found, send that to the next activity,otherwise just send locality
+
+
+
+
+
+
                     //No error message displayed
                     return("");
                 }
@@ -130,18 +149,13 @@ public class MainActivity extends AppCompatActivity{
             return null;
         }
 
-        protected void end(LatLng latLng) {
-            sendLatlng(latLng);
 
-        }
-
-
-        //Declares an issue
+        //On end of async thread execution
         protected void onPostExecute(String result){
             super.onPostExecute(result);
             loading.setVisibility(View.INVISIBLE);
             if(!result.equals("")){
-                Toast.makeText(getApplicationContext(),"There was an error",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),result,Toast.LENGTH_SHORT).show();
 
             }
 

@@ -33,6 +33,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng latlng;
 
     String locality;
+    String address;
     double latitudeTown,longitudeTown; //latitudes of locality
 
 
@@ -50,6 +51,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         latitudeTown = infoIntent.getDoubleExtra("Latitude",0);
         longitudeTown = infoIntent.getDoubleExtra("Longitude",0);
         locality = infoIntent.getStringExtra("Locality");
+
+
+
+
 
         this.latlng = new LatLng(latitudeTown,longitudeTown);
 
@@ -98,7 +103,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
                 //When marker is clicked, a dialog pops up to see if user wants to submit a review or look at reviews
-                builder.setTitle("Trick or Treat?").setPositiveButton("Add review", new DialogInterface.OnClickListener() {
+                builder.setTitle("Trick or Treat!").setPositiveButton("Add review", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 MapClickAsync mapClickThread = new MapClickAsync(); //Need to create a new async thread each time
@@ -262,7 +267,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 opt.show(getSupportFragmentManager(),"Options");
             }*/
 
-           ShowEvents showEvents = new ShowEvents();
+            ShowEvents showEvents = new ShowEvents();
             showEvents.setArguments(bundle);
             //In case the fragment is already there
             if(!showEvents.isAdded()){

@@ -3,26 +3,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:minHeight="800dp"
+    android:background="@color/colorSecondary"
     tools:context="michael.com.trickortreat.CreateEvent">
 
 
     <Button
         android:id="@+id/submit"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="Submit Review"
-        android:background="@drawable/button"
-        android:layout_below="@+id/rating"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp" />
+        android:layout_alignBaseline="@+id/error"
+        android:layout_alignBottom="@+id/error"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/button_state"
+        android:text="Create Review"
+        android:textColor="@color/textColorSecondary" />
 
     <EditText
         android:id="@+id/address"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="103dp"
         android:ems="10"
         android:inputType="textPersonName"
+        android:textAlignment="center"
+        android:textSize="12dp"
+        android:textColor="@color/textColorSecondary"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
@@ -39,18 +45,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:textColor="@color/textColorSecondary"
         android:inputType="textPersonName"
+        android:hint="Write a review!"
+        android:textAlignment="center"
+        android:textColorHint="@color/colorPrimaryLight"
+        android:layout_marginTop="24dp"
         android:layout_below="@+id/address"
-        android:layout_alignStart="@+id/address"
-        android:layout_marginTop="24dp" />
+        android:layout_centerHorizontal="true" />
 
     <ProgressBar
         android:id="@+id/loading"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/error"
-        android:layout_centerHorizontal="true" />
+
+        android:layout_above="@+id/submit"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp" />
 
     <TextView
         android:id="@+id/error"
