@@ -20,7 +20,7 @@
         android:textColor="@color/textColorSecondary" />
 
     <EditText
-        android:id="@+id/address"
+        android:id="@+id/comments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="103dp"
@@ -48,10 +48,12 @@
         android:textColor="@color/textColorSecondary"
         android:inputType="textPersonName"
         android:hint="Write a review!"
+        android:background="@drawable/textbox"
+        android:maxLines="4"
         android:textAlignment="center"
         android:textColorHint="@color/colorPrimaryLight"
         android:layout_marginTop="24dp"
-        android:layout_below="@+id/address"
+        android:layout_below="@+id/comments"
         android:layout_centerHorizontal="true" />
 
     <ProgressBar

@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
 import android.support.v7.app.AlertDialog;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -200,9 +201,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             Geocoder geocoder = new Geocoder(getApplicationContext());
             try {
-                List<Address> addresses = geocoder.getFromLocation(latlngs[0].latitude, latlngs[0].longitude, 2);
-                Address address = addresses.get(0);
-                return address;
+                try {
+                    List<Address> addresses = geocoder.getFromLocation(latlngs[0].latitude, latlngs[0].longitude, 2);
+                    Address address = addresses.get(0);
+                    return address;
+                }catch(ArrayIndexOutOfBoundsException aiobe){
+                    aiobe.printStackTrace();
+                    return null;
+                }
             }catch(IOException io){
                 io.printStackTrace();
             }
@@ -214,27 +220,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         protected void onPostExecute(Address address) {
             CreateEvent createEvent = new CreateEvent();
 
-            Bundle bundle = new Bundle();
+           if(address!=null) {
+               Bundle bundle = new Bundle();
 
-            double latitude = address.getLatitude(); //Latitude of clicked address
-            double longitude = address.getLongitude(); //Longitude of clicked address
+               double latitude = address.getLatitude(); //Latitude of clicked address
+               double longitude = address.getLongitude(); //Longitude of clicked address
 
 
+               //Sends location details to CreateEvent dialogFragment
 
-            //Sends location details to CreateEvent dialogFragment
-            bundle.putString("Address",address.getAddressLine(0));
-            bundle.putString("Locality",locality);
-            bundle.putDouble("Latitude",latitude);
-            bundle.putDouble("Longitude",longitude);
+               if (address.getThoroughfare() != null) {
+                   bundle.putString("Address", address.getSubThoroughfare() + ", " + address.getThoroughfare());
+               } else {
+                   bundle.putString("Address", address.getLocality());
+               }
 
-            createEvent.setArguments(bundle);
-            //In case the fragment is already there
-            if(!createEvent.isAdded()){
-                createEvent.show(getFragmentManager(),"DialogFragment");
-            }
+               bundle.putString("Locality", locality);
+               bundle.putDouble("Latitude", latitude);
+               bundle.putDouble("Longitude", longitude);
 
-            //When its cancelled or dismissed, receive information and place it on map
+               createEvent.setArguments(bundle);
+               //In case the fragment is already there
+               if (!createEvent.isAdded()) {
+                   createEvent.show(getFragmentManager(), "DialogFragment");
+               }
 
+               //When its cancelled or dismissed, receive information and place it on map
+           }
+           else{
+               Toast.makeText(getApplicationContext(),"An Error has occured, SPOOKY!",Toast.LENGTH_SHORT).show();
+           }
 
         }
     }
@@ -260,12 +275,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         protected void onPostExecute(Address address) {
             Bundle bundle = new Bundle();
             bundle.putString("Address",address.getAddressLine(0));
-            /*OptionsDialog opt = new OptionsDialog();
 
-            if(!opt.isAdded()){
-                opt.setArguments(bundle);
-                opt.show(getSupportFragmentManager(),"Options");
-            }*/
+            if (address.getThoroughfare() != null) {
+                bundle.putString("TextAddress", address.getSubThoroughfare() + ", " + address.getThoroughfare());
+            } else {
+                bundle.putString("TextAddress", address.getLocality());
+            }
+
 
             ShowEvents showEvents = new ShowEvents();
             showEvents.setArguments(bundle);

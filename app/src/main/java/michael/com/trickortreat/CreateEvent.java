@@ -48,11 +48,11 @@ public class CreateEvent extends DialogFragment {
 
         Bundle bundle = getArguments();
         initAddress = bundle.getString("Address"); //Retrieves address from MapsActivity
-        System.out.println("First test: " + initAddress);
+
         locality = bundle.getString("Locality"); //Retrieves locality from MapsActivity
         latitude = bundle.getDouble("Latitude");//Retrieves latitude from MapsActivity
         longitude = bundle.getDouble("Longitude");//Retrieves longitude from MapsActivity
-        addr = rootView.findViewById(R.id.address); //Bar to edit the address
+        addr = rootView.findViewById(R.id.comments); //Bar to edit the address
         rating = rootView.findViewById(R.id.rating); //Rating from 0-5
         comment = rootView.findViewById(R.id.comment);
         loading = rootView.findViewById(R.id.loading);

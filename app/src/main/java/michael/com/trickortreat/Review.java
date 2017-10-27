@@ -6,7 +6,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class Review {
 
     private float stars;
-    private String comments,address,locality;
+    private String comments,address,textAddress,locality;
     private double latitude,longitude;
 
 
@@ -25,10 +25,11 @@ public class Review {
     }
 
     //Second constructor to show events
-    public Review(float stars,String comments, String address){
+    public Review(float stars,String comments, String address,String textAddress){
         this.stars = stars;
         this.comments = comments;
         this.address = address;
+        this.textAddress = textAddress;
     }
 
 
@@ -52,8 +53,13 @@ public class Review {
     }
     public String getLocality(){return locality;}
 
+    public String getTextAddress() {
+        return textAddress;
+    }
 
-
+    public void setTextAddress(String textAddress) {
+        this.textAddress = textAddress;
+    }
 
     public String getAddress() {
         return address;

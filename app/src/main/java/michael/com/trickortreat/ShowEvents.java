@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 public class ShowEvents extends DialogFragment {
     private String address;
+    private String textAddress;
     ArrayList<Review> reviews;
     AdapterClass adapter;
 
@@ -56,15 +57,17 @@ public class ShowEvents extends DialogFragment {
 
         Bundle bundle = getArguments();
         //Retrieves address from MapActivity
-        this.address = bundle.getString("Address");
+        address = bundle.getString("Address");
+        textAddress = bundle.getString("TextAddress");
+
         DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference();
-        System.out.println(address);
+
         //Searches for all reviews from selected marker
         dataRef.orderByChild("address").equalTo(address).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Review review = dataSnapshot.getValue(Review.class);
-
+                review.setTextAddress(textAddress);
 
                 //If a review found, add it to the arraylist and notifies the adapter of the change
                 reviews.add(review);
