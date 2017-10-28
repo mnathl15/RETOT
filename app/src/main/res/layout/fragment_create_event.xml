@@ -20,25 +20,30 @@
         android:textColor="@color/textColorSecondary" />
 
     <EditText
-        android:id="@+id/comments"
-        android:layout_width="match_parent"
+        android:id="@+id/address"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="103dp"
+        android:background="@drawable/textbox"
+        android:fontFamily="casual"
+        android:layout_marginTop="12dp"
         android:ems="10"
+        android:textCursorDrawable="@drawable/cursor"
+        android:padding="5dp"
         android:inputType="textPersonName"
         android:textAlignment="center"
-        android:textSize="12dp"
         android:textColor="@color/textColorSecondary"
-        android:layout_alignParentTop="true"
+
+        android:textColorHint="@color/textColorSecondary"
+        android:layout_below="@+id/enter_address"
         android:layout_centerHorizontal="true" />
 
     <RatingBar
         android:id="@+id/rating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/comment"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp" />
+        android:layout_marginBottom="22dp"
+        android:layout_above="@+id/loading"
+        android:layout_centerHorizontal="true" />
 
     <EditText
         android:id="@+id/comment"
@@ -47,13 +52,13 @@
         android:ems="10"
         android:textColor="@color/textColorSecondary"
         android:inputType="textPersonName"
-        android:hint="Write a review!"
-        android:background="@drawable/textbox"
+
+        android:background="@drawable/textbox_huge"
         android:maxLines="4"
         android:textAlignment="center"
         android:textColorHint="@color/colorPrimaryLight"
-        android:layout_marginTop="24dp"
-        android:layout_below="@+id/comments"
+        android:layout_marginTop="12dp"
+        android:layout_below="@+id/write_review"
         android:layout_centerHorizontal="true" />
 
     <ProgressBar
@@ -73,4 +78,33 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="28dp" />
+
+    <TextView
+        android:id="@+id/enter_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="casual"
+        android:textColor="@color/textColorSecondary"
+        android:layout_marginTop="39dp"
+        android:textAlignment="center"
+
+        android:textSize="24sp"
+        android:text="Enter your address!"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/write_review"
+        android:fontFamily="casual"
+        android:textColor="@color/textColorSecondary"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+
+        android:text="Write a review!"
+        android:layout_below="@+id/address"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="27dp" />
 </RelativeLayout>

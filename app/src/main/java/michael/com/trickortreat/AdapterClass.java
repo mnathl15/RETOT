@@ -80,7 +80,7 @@ public class AdapterClass  extends RecyclerView.Adapter<AdapterClass.ViewHolder>
             super(itemView);
 
             address = itemView.findViewById(R.id.address);
-            comments = itemView.findViewById(R.id.comments);
+            comments = itemView.findViewById(R.id.address);
             stars = itemView.findViewById(R.id.stars);
         }
     }
