@@ -42,6 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="22dp"
+        android:rating="2.5"
         android:layout_above="@+id/loading"
         android:layout_centerHorizontal="true" />
 
@@ -51,11 +52,11 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:textColor="@color/textColorSecondary"
-        android:inputType="textPersonName"
-
+        android:inputType="textMultiLine"
+        android:gravity="top|left"
         android:background="@drawable/textbox_huge"
         android:maxLines="4"
-        android:textAlignment="center"
+        android:padding="5dp"
         android:textColorHint="@color/colorPrimaryLight"
         android:layout_marginTop="12dp"
         android:layout_below="@+id/write_review"
