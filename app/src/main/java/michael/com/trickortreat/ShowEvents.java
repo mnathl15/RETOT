@@ -57,7 +57,8 @@ public class ShowEvents extends DialogFragment {
 
         Bundle bundle = getArguments();
         //Retrieves address from MapActivity
-        address = bundle.getString("Address");
+        address = bundle.getString("TextAddress");
+
         textAddress = bundle.getString("TextAddress");
 
         DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference();

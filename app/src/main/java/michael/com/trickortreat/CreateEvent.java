@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -68,9 +69,14 @@ public class CreateEvent extends DialogFragment {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loading.setVisibility(View.VISIBLE);
-                AsyncSearch asyncThread = new AsyncSearch();
-                asyncThread.execute(addr.getText().toString());
+                if(comment.length() > 100){
+                    Toast.makeText(getActivity(),"Can't be over 100 characters, your review has " + comment.getText().length() + " characters",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    loading.setVisibility(View.VISIBLE);
+                    AsyncSearch asyncThread = new AsyncSearch();
+                    asyncThread.execute(addr.getText().toString());
+                }
 
             }
         });

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.w3c.dom.Text;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
 
 
+        MobileAds.initialize(this,"ca-app-pub-7976536633439574~4252347347");
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setActionBar(toolbar);
@@ -75,7 +77,7 @@ public class MainActivity extends AppCompatActivity{
                     async.execute(locality);
                 }
                 else{
-                    Toast.makeText(getApplicationContext(),"There was an error",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Please enter something",Toast.LENGTH_SHORT).show();
                     loading.setVisibility(View.INVISIBLE);
 
                 }
@@ -128,20 +130,13 @@ public class MainActivity extends AppCompatActivity{
                     //If a specific address can be found, send that to the next activity,otherwise just send locality
 
 
-
-
-
-
                     //No error message displayed
                     return("");
                 }
                 else{
                     //Error message displayed
-                    return("There was an error");
+                    return("Can't find that location");
                 }
-
-
-
 
             }catch(IOException io){
                 io.printStackTrace();
@@ -154,9 +149,14 @@ public class MainActivity extends AppCompatActivity{
         protected void onPostExecute(String result){
             super.onPostExecute(result);
             loading.setVisibility(View.INVISIBLE);
-            if(!result.equals("")){
-                Toast.makeText(getApplicationContext(),result,Toast.LENGTH_SHORT).show();
+            try {
+                if (!result.equals("")) {
+                    Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
 
+                }
+            }catch(NullPointerException npe){
+                npe.printStackTrace();
+                Toast.makeText(getApplicationContext(),"An error occurred,please try again",Toast.LENGTH_SHORT).show();
             }
 
         }

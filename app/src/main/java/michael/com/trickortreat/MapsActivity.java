@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -45,8 +47,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
 
 
-
-
+        //Builds the add and loads it
+        AdView adView =findViewById(R.id.adView);
+        AdRequest request = new AdRequest.Builder().addTestDevice("AF7AF275AAFF4A3E5CAE6F2262159AE5")
+                .build();
+        adView.loadAd(request);
 
         Intent infoIntent = getIntent(); //Gets extra data sent from MainActivity
         latitudeTown = infoIntent.getDoubleExtra("Latitude",0);
@@ -205,8 +210,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     List<Address> addresses = geocoder.getFromLocation(latlngs[0].latitude, latlngs[0].longitude, 2);
                     Address address = addresses.get(0);
                     return address;
-                }catch(ArrayIndexOutOfBoundsException aiobe){
-                    aiobe.printStackTrace();
+                }catch(IndexOutOfBoundsException iobe){
+                    iobe.printStackTrace();
                     return null;
                 }
             }catch(IOException io){
@@ -248,7 +253,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                //When its cancelled or dismissed, receive information and place it on map
            }
            else{
-               Toast.makeText(getApplicationContext(),"An Error has occured, SPOOKY!",Toast.LENGTH_SHORT).show();
+               Toast.makeText(getApplicationContext(),"An error has occured, SPOOKY!",Toast.LENGTH_SHORT).show();
            }
 
         }
@@ -262,7 +267,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             try {
                 List<Address> addresses = geocoder.getFromLocation(latlngs[0].latitude, latlngs[0].longitude, 2);
                 Address address = addresses.get(0);
-                System.out.println("Here address: " + address.getAddressLine(0));
                 return address;
             }catch(IOException io){
                 io.printStackTrace();
@@ -278,18 +282,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             if (address.getThoroughfare() != null) {
                 bundle.putString("TextAddress", address.getSubThoroughfare() + ", " + address.getThoroughfare());
+                ShowEvents showEvents = new ShowEvents();
+                showEvents.setArguments(bundle);
+                //In case the fragment is already there
+                if(!showEvents.isAdded()){
+                    showEvents.show(getSupportFragmentManager(),"Events");
+                }
             } else {
-                bundle.putString("TextAddress", address.getLocality());
+                Toast.makeText(getApplicationContext(),"An error occured",Toast.LENGTH_SHORT).show();
             }
-
-
-            ShowEvents showEvents = new ShowEvents();
-            showEvents.setArguments(bundle);
-            //In case the fragment is already there
-            if(!showEvents.isAdded()){
-                showEvents.show(getSupportFragmentManager(),"Events");
-            }
-
 
         }
 

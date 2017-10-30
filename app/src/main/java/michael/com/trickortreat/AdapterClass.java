@@ -57,7 +57,7 @@ public class AdapterClass  extends RecyclerView.Adapter<AdapterClass.ViewHolder>
         RatingBar stars = holder.stars;
 
         address.setText("Address: " + review.getTextAddress());
-        comments.setText("Comments : "  + review.getComments());
+        comments.setText("Review : "  + review.getComments());
         stars.setRating(review.getStars());
 
     }
@@ -80,7 +80,7 @@ public class AdapterClass  extends RecyclerView.Adapter<AdapterClass.ViewHolder>
             super(itemView);
 
             address = itemView.findViewById(R.id.address);
-            comments = itemView.findViewById(R.id.address);
+            comments = itemView.findViewById(R.id.review);
             stars = itemView.findViewById(R.id.stars);
         }
     }
